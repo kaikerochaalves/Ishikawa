@@ -57,7 +57,7 @@ Example of Ishikawa:
     fishbone_diagram.draw()
 
     # Show the plot
-    fishbone_diagram.show()
+    fishbone_diagram.plot_and_save()
 
 Note: Do not use more than 6 categories or 5 causes per category. Otherwise you are going to have issues with formatting.
 

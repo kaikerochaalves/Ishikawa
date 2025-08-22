@@ -18,6 +18,7 @@ enabling me to propose efficient solutions and reduce waste.
 """
 
 # Libraries
+import os
 import math
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon, Wedge
@@ -27,7 +28,7 @@ class Ishikawa:
     An Object-Oriented representation of an Ishikawa (Fishbone) Diagram generator.
     
     """
-    def __init__(self, data: dict, figsize: tuple = (12, 7)):
+    def __init__(self, data: dict, target: str = "PROBLEM", figsize: tuple = (12, 7)):
         """
         Initializes the diagram object and sets up the matplotlib canvas.
         
@@ -39,6 +40,7 @@ class Ishikawa:
             The size of the plot figure.
         """
         self.data = data
+        self.target = target.replace(" ", "\n")
         self.fig, self.ax = plt.subplots(figsize=figsize, layout='constrained')
         
         # Set up the canvas exactly as in the original script
@@ -92,7 +94,7 @@ class Ishikawa:
         (Formerly the 'draw_spine' function)
         """
         self.ax.plot([xmin - 0.1, xmax], [0, 0], color='tab:blue', linewidth=2)
-        self.ax.text(xmax + 0.1, -0.05, 'PROBLEM', fontsize=10, 
+        self.ax.text(xmax + 0.1, -0.05, self.target, fontsize=10, 
                      weight='bold', color='white')
         semicircle = Wedge((xmax, 0), 1, 270, 90, fc='tab:blue')
         self.ax.add_patch(semicircle)
@@ -124,11 +126,26 @@ class Ishikawa:
             if index > 5:
                 raise ValueError(f'Maximum number of problems is 6, you have entered '
                                  f'{len(self.data)}')
+            for k in self.data.keys():
+                if len(self.data[k]) > 5:
+                    raise ValueError('Maximum number of causes is 5 per category.')
 
             # Call the internal methods which were converted from your functions
             self._draw_category(list(self.data.keys())[index], prob_arrow_x, 0, -12, y_prob_angle)
             self._draw_causes(problem, cause_arrow_x, cause_arrow_y, top=plot_above)
 
-    def show(self):
-        """Displays the generated plot."""
+    def plot_and_save(self, output_folder: str = 'Figures', filename: str = 'pareto_flight_analysis', extension: str = 'png', quality_dpi: int = 1200):
+        """Displays and save the generated plot."""
+        
+        # Create the folder if it does not exist
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
+
+        # Define the full path for the output file
+        file_path = os.path.join(output_folder, f'{filename}.{extension}')
+        
+        # Save the figure to the specified path with high resolution
+        plt.savefig(file_path, dpi=quality_dpi, bbox_inches='tight')
+        
         plt.show()
+        

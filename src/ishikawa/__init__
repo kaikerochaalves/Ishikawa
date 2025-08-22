@@ -27,4 +27,4 @@ from .diagram import Ishikawa
 
 __all__ = ["Ishikawa"]
 
-__version__ = "0.0.1"  # Update version as needed
+__version__ = "0.0.5"  # Update version as needed
